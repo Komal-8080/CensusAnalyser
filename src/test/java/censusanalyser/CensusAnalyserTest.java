@@ -41,7 +41,6 @@ public class CensusAnalyserTest {
 			censusAnalyser.loadIndiaCensusData(INDIA_STATE_CSV_FILE_PATH);
 		} catch (CensusAnalyserException e) {
 			Assert.assertEquals(CensusAnalyserException.ExceptionType.FILE_ERROR, e.type);
-
 		}
 	}
 
@@ -90,4 +89,17 @@ public class CensusAnalyserTest {
 			Assert.assertEquals(CensusAnalyserException.ExceptionType.CENSUS_FILE_PROBLEM, e.type);
 		}
 	}
+
+	@Test
+	public void givenIndianStateCSV_WithWrongFileType_ShouldThrowException() {
+		try {
+			CensusAnalyser censusAnalyser = new CensusAnalyser();
+			ExpectedException exceptionRule = ExpectedException.none();
+			exceptionRule.expect(CensusAnalyserException.class);
+			censusAnalyser.loadIndianStateCode(INDIA_CENSUS_CSV_FILE_PATH);
+		} catch (CensusAnalyserException e) {
+			Assert.assertEquals(CensusAnalyserException.ExceptionType.FILE_ERROR_IN_STATE_CODE, e.type);
+		}
+	}
+
 }
