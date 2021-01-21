@@ -56,6 +56,18 @@ public class CensusAnalyserTest {
 	            Assert.assertEquals(CensusAnalyserException.ExceptionType.FILE_ERROR, e.type);
 	        }
 	    }
+	 
+	 @Test
+	    public void givenIndiaCensusData_WithIncorrectHeader_ShouldThrowException() {
+	        try {
+	        	CensusAnalyser censusAnalyser = new CensusAnalyser();
+	            ExpectedException exceptionRule = ExpectedException.none();
+	            exceptionRule.expect(CensusAnalyserException.class);
+	            censusAnalyser.loadIndiaCensusData(INDIA_CENSUS_CSV_FILE_PATH);
+	        } catch (CensusAnalyserException e) {
+	            Assert.assertEquals(CensusAnalyserException.ExceptionType.FILE_ERROR, e.type);
+	        }
+	    }
 	
 	@Test
 	public void givenIndianStateCSV_ShouldReturnExactCount() throws CensusAnalyserException {
