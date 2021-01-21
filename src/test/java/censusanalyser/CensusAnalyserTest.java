@@ -101,7 +101,7 @@ public class CensusAnalyserTest {
 			Assert.assertEquals(CensusAnalyserException.ExceptionType.FILE_ERROR_IN_STATE_CODE, e.type);
 		}
 	}
-	
+
 	@Test
 	public void givenIndianStateCSV_WithIncorrectDelimiter_ShouldThrowException() {
 		try {
@@ -114,4 +114,15 @@ public class CensusAnalyserTest {
 		}
 	}
 
+	@Test
+	public void givenIndianStateCSV_WithIncorrectHeader_ShouldThrowException() {
+		try {
+			CensusAnalyser censusAnalyser = new CensusAnalyser();
+			ExpectedException exceptionRule = ExpectedException.none();
+			exceptionRule.expect(CensusAnalyserException.class);
+			censusAnalyser.loadIndianStateCode(INDIA_STATE_CSV_FILE_PATH);
+		} catch (CensusAnalyserException e) {
+			Assert.assertEquals(CensusAnalyserException.ExceptionType.FILE_ERROR_IN_STATE_CODE, e.type);
+		}
+	}
 }

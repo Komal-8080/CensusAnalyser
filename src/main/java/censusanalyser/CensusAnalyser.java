@@ -48,8 +48,7 @@ public class CensusAnalyser {
 		} catch (IllegalStateException e) {
 			throw new CensusAnalyserException(e.getMessage(), CensusAnalyserException.ExceptionType.UNABLE_TO_PARSE);
 		}catch (RuntimeException e){
-            throw new CensusAnalyserException(e.getMessage(),
-                    CensusAnalyserException.ExceptionType.FILE_ERROR_IN_STATE_CODE);
+            throw new CensusAnalyserException(e.getMessage(), CensusAnalyserException.ExceptionType.FILE_ERROR_IN_STATE_CODE);
         } 
 	}
 }
