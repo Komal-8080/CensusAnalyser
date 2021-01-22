@@ -1,8 +1,5 @@
 package censusanalyser;
 
-import com.opencsv.bean.CsvToBean;
-import com.opencsv.bean.CsvToBeanBuilder;
-
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.file.Files;
@@ -14,7 +11,7 @@ public class CensusAnalyser {
 
 	public int loadIndiaCensusData(String csvFilePath) throws CensusAnalyserException {
 		try (Reader reader = Files.newBufferedReader(Paths.get(csvFilePath))) {
-			Iterator<IndiaCensusCSV> censusCSVIterator = this.getCSVFileIterator(reader, IndiaCensusCSV.class);
+			Iterator<IndiaCensusCSV> censusCSVIterator = new OpenCSVBuilder().getCSVFileIterator(reader, IndiaCensusCSV.class);
 			return this.getCount(censusCSVIterator);
 		} catch (IOException e) {
 			throw new CensusAnalyserException(e.getMessage(),
@@ -28,7 +25,7 @@ public class CensusAnalyser {
 
 	public int loadIndianStateCode(String csvFilePath) throws CensusAnalyserException {
 		try (Reader reader = Files.newBufferedReader(Paths.get(csvFilePath))) {
-			Iterator<IndiaStateCodeCSV> censusCSVIterator = this.getCSVFileIterator(reader, IndiaStateCodeCSV.class);
+			Iterator<IndiaStateCodeCSV> censusCSVIterator = new OpenCSVBuilder().getCSVFileIterator(reader, IndiaStateCodeCSV.class);
 			return this.getCount(censusCSVIterator);
 		} catch (IOException e) {
 			throw new CensusAnalyserException(e.getMessage(),
@@ -38,19 +35,6 @@ public class CensusAnalyser {
 		}catch (RuntimeException e){
             throw new CensusAnalyserException(e.getMessage(), CensusAnalyserException.ExceptionType.FILE_ERROR_IN_STATE_CODE);
         } 
-	}
-	
-	
-	private <E> Iterator<E> getCSVFileIterator(Reader reader, Class csvClass) throws CensusAnalyserException {
-		try {
-		CsvToBeanBuilder<E> csvToBeanBuilder = new CsvToBeanBuilder<>(reader);
-		csvToBeanBuilder.withType(csvClass);
-		csvToBeanBuilder.withIgnoreLeadingWhiteSpace(true);
-		CsvToBean<E> csvToBean = csvToBeanBuilder.build();
-		return csvToBean.iterator();
-		}catch (IllegalStateException e) {
-			throw new CensusAnalyserException(e.getMessage(), CensusAnalyserException.ExceptionType.UNABLE_TO_PARSE);
-		}	
 	}
 	 
 	private <E> int getCount(Iterator<E> iterator) {
