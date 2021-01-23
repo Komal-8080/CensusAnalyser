@@ -98,6 +98,22 @@ public class CensusAnalyser {
 			throw new CensusAnalyserException(e.getMessage(), CensusAnalyserException.ExceptionType.FILE_ERROR);
 		}
 	}
+	
+	public String getAreaInSqKmWiseSortedCensusData() throws CensusAnalyserException {
+		try (Writer writer = new FileWriter("./src/test/resources/IndiaCensusAreaInSqKmDataJson.json")) {
+			if (censusCSVList == null || censusCSVList.size() == 0) {
+				throw new CensusAnalyserException("No Census Data", CensusAnalyserException.ExceptionType.NO_DATA);
+			}
+			Comparator<IndiaCensusCSV> censusComparator = Comparator.comparing(census -> census.areaInSqKm);
+			this.largesetFirstSort(censusComparator);
+			String sortedStateCensusJson = new Gson().toJson(censusCSVList);
+			Gson gson = new GsonBuilder().create();
+			gson.toJson(censusCSVList, writer);
+			return sortedStateCensusJson;
+		} catch (RuntimeException | IOException e) {
+			throw new CensusAnalyserException(e.getMessage(), CensusAnalyserException.ExceptionType.FILE_ERROR);
+		}
+	}
 
 	public void smallestFirstSort(Comparator<IndiaCensusCSV> censusComparator) {
 		for (int i = 0; i < censusCSVList.size() - 1; i++) {
