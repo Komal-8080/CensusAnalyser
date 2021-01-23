@@ -58,12 +58,38 @@ public class CensusAnalyser {
 	}
 
 	public String getStateWiseSortedCensusData() throws CensusAnalyserException {
+		if (censusCSVList == null || censusCSVList.size() == 0) {
+			throw new CensusAnalyserException("No Census Data", CensusAnalyserException.ExceptionType.NO_DATA);
+		}
+		Comparator<IndiaCensusCSV> censusComparator = Comparator.comparing(census -> census.state);
+		this.smallestFirstSort(censusComparator);
+		String sortedStateCensusJson = new Gson().toJson(censusCSVList);
+		return sortedStateCensusJson;
+	}
+
+	public String getPopulationWiseSortedCensusData() throws CensusAnalyserException {
 		try (Writer writer = new FileWriter("./src/test/resources/IndiaStatePopulationDataJson.json")) {
 			if (censusCSVList == null || censusCSVList.size() == 0) {
 				throw new CensusAnalyserException("No Census Data", CensusAnalyserException.ExceptionType.NO_DATA);
 			}
 			Comparator<IndiaCensusCSV> censusComparator = Comparator.comparing(census -> census.population);
-			this.sort(censusComparator);
+			this.largesetFirstSort(censusComparator);
+			String sortedStateCensusJson = new Gson().toJson(censusCSVList);
+			Gson gson = new GsonBuilder().create();
+			gson.toJson(censusCSVList, writer);
+			return sortedStateCensusJson;
+		} catch (RuntimeException | IOException e) {
+			throw new CensusAnalyserException(e.getMessage(), CensusAnalyserException.ExceptionType.FILE_ERROR);
+		}
+	}
+	
+	public String getDensityPerSqKmWiseSortedCensusData() throws CensusAnalyserException {
+		try (Writer writer = new FileWriter("./src/test/resources/IndiaCensusDensityPerSqKmDataJson.json")) {
+			if (censusCSVList == null || censusCSVList.size() == 0) {
+				throw new CensusAnalyserException("No Census Data", CensusAnalyserException.ExceptionType.NO_DATA);
+			}
+			Comparator<IndiaCensusCSV> censusComparator = Comparator.comparing(census -> census.densityPerSqKm);
+			this.largesetFirstSort(censusComparator);
 			String sortedStateCensusJson = new Gson().toJson(censusCSVList);
 			Gson gson = new GsonBuilder().create();
 			gson.toJson(censusCSVList, writer);
@@ -73,7 +99,20 @@ public class CensusAnalyser {
 		}
 	}
 
-	public void sort(Comparator<IndiaCensusCSV> censusComparator) {
+	public void smallestFirstSort(Comparator<IndiaCensusCSV> censusComparator) {
+		for (int i = 0; i < censusCSVList.size() - 1; i++) {
+			for (int j = 0; j < censusCSVList.size() - 1 - i; j++) {
+				IndiaCensusCSV census1 = censusCSVList.get(j);
+				IndiaCensusCSV census2 = censusCSVList.get(j + 1);
+				if (censusComparator.compare(census1, census2) > 0) {
+					censusCSVList.set(j, census2);
+					censusCSVList.set(j + 1, census1);
+				}
+			}
+		}
+	}
+	
+	public void largesetFirstSort(Comparator<IndiaCensusCSV> censusComparator) {
 		for (int i = 0; i < censusCSVList.size() - 1; i++) {
 			for (int j = 0; j < censusCSVList.size() - 1 - i; j++) {
 				IndiaCensusCSV census1 = censusCSVList.get(j);
