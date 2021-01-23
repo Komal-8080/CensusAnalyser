@@ -12,9 +12,4 @@ public class CSVBuilderException extends Exception {
 		super(message);
 		this.type = type;
 	}  
-	
-	public CSVBuilderException(String message, ExceptionType type, Throwable cause) {
-        super(message, cause);
-        this.type = type;
-    }
 }
