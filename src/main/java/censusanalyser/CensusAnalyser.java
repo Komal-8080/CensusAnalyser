@@ -1,7 +1,9 @@
 package censusanalyser;
 
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.Reader;
+import java.io.Writer;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Comparator;
@@ -10,12 +12,13 @@ import java.util.List;
 import java.util.stream.StreamSupport;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 public class CensusAnalyser {
 
 	List<IndiaCensusCSV> censusCSVList = null;
 	List<IndiaStateCodeCSV> stateCodeCSVList = null;
-	
+
 	public int loadIndiaCensusData(String csvFilePath) throws CensusAnalyserException {
 		try (Reader reader = Files.newBufferedReader(Paths.get(csvFilePath))) {
 			ICSVBuilder csvBuilder = CSVBuilderFactory.createCSVBuilder();
@@ -55,13 +58,19 @@ public class CensusAnalyser {
 	}
 
 	public String getStateWiseSortedCensusData() throws CensusAnalyserException {
-		if (censusCSVList == null || censusCSVList.size() == 0) {
-			throw new CensusAnalyserException("No Census Data", CensusAnalyserException.ExceptionType.NO_DATA);
+		try (Writer writer = new FileWriter("./src/test/resources/IndiaStatePopulationDataJson.json")) {
+			if (censusCSVList == null || censusCSVList.size() == 0) {
+				throw new CensusAnalyserException("No Census Data", CensusAnalyserException.ExceptionType.NO_DATA);
+			}
+			Comparator<IndiaCensusCSV> censusComparator = Comparator.comparing(census -> census.population);
+			this.sort(censusComparator);
+			String sortedStateCensusJson = new Gson().toJson(censusCSVList);
+			Gson gson = new GsonBuilder().create();
+			gson.toJson(censusCSVList, writer);
+			return sortedStateCensusJson;
+		} catch (RuntimeException | IOException e) {
+			throw new CensusAnalyserException(e.getMessage(), CensusAnalyserException.ExceptionType.FILE_ERROR);
 		}
-		Comparator<IndiaCensusCSV> censusComparator = Comparator.comparing(census -> census.population);
-		this.sort(censusComparator);
-		String sortedStateCensusJson = new Gson().toJson(censusCSVList);
-		return sortedStateCensusJson;
 	}
 
 	public void sort(Comparator<IndiaCensusCSV> censusComparator) {
@@ -76,7 +85,7 @@ public class CensusAnalyser {
 			}
 		}
 	}
-	
+
 	public String getStateCodeWiseSortedData() throws CensusAnalyserException {
 		if (stateCodeCSVList == null || stateCodeCSVList.size() == 0) {
 			throw new CensusAnalyserException("No Data", CensusAnalyserException.ExceptionType.NO_DATA);
