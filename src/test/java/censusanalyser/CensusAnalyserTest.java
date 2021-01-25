@@ -6,6 +6,8 @@ import org.junit.rules.ExpectedException;
 
 import com.google.gson.Gson;
 
+import JarFileCensusAnalyser.CSVBuilderException;
+
 public class CensusAnalyserTest {
 
 	private static final String INDIA_CENSUS_CSV_FILE_PATH = "./src/test/resources/IndiaStateCensusData.csv";
