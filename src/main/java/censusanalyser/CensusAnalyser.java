@@ -11,12 +11,15 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.stream.StreamSupport;
 
+import org.apache.commons.csv.CSVFormat;
+import org.apache.commons.csv.CSVRecord;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
-import JarFileCensusAnalyser.CSVBuilderException;
+/*import JarFileCensusAnalyser.CSVBuilderException;
 import JarFileCensusAnalyser.CSVBuilderFactory;
-import JarFileCensusAnalyser.ICSVBuilder;
+import JarFileCensusAnalyser.ICSVBuilder;*/
 
 public class CensusAnalyser {
 
@@ -86,7 +89,7 @@ public class CensusAnalyser {
 			throw new CensusAnalyserException(e.getMessage(), CensusAnalyserException.ExceptionType.FILE_ERROR);
 		}
 	}
-	
+
 	public String getDensityPerSqKmWiseSortedCensusData() throws CensusAnalyserException {
 		try (Writer writer = new FileWriter("./src/test/resources/IndiaCensusDensityPerSqKmDataJson.json")) {
 			if (censusCSVList == null || censusCSVList.size() == 0) {
@@ -102,7 +105,7 @@ public class CensusAnalyser {
 			throw new CensusAnalyserException(e.getMessage(), CensusAnalyserException.ExceptionType.FILE_ERROR);
 		}
 	}
-	
+
 	public String getAreaInSqKmWiseSortedCensusData() throws CensusAnalyserException {
 		try (Writer writer = new FileWriter("./src/test/resources/IndiaCensusAreaInSqKmDataJson.json")) {
 			if (censusCSVList == null || censusCSVList.size() == 0) {
@@ -131,7 +134,7 @@ public class CensusAnalyser {
 			}
 		}
 	}
-	
+
 	public void largesetFirstSort(Comparator<IndiaCensusCSV> censusComparator) {
 		for (int i = 0; i < censusCSVList.size() - 1; i++) {
 			for (int j = 0; j < censusCSVList.size() - 1 - i; j++) {
@@ -165,6 +168,19 @@ public class CensusAnalyser {
 					stateCodeCSVList.set(j + 1, census1);
 				}
 			}
+		}
+	}
+
+	public int loadIndiaCensusAndStateCodeInCommonsCSV(String csvFilePath) throws CensusAnalyserException {
+		try (Reader reader = Files.newBufferedReader(Paths.get(csvFilePath));) {
+			Iterator<CSVRecord> csvRecords = CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreHeaderCase().withTrim()
+					.parse(reader).iterator();
+			return this.getCount(csvRecords);
+		} catch (IOException e) {
+			throw new CensusAnalyserException(e.getMessage(),
+					CensusAnalyserException.ExceptionType.CENSUS_FILE_PROBLEM);
+		} catch (RuntimeException e) {
+			throw new CensusAnalyserException(e.getMessage(), CensusAnalyserException.ExceptionType.FILE_ERROR);
 		}
 	}
 }

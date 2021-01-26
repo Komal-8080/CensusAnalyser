@@ -1,4 +1,4 @@
-/*package censusanalyser;
+package censusanalyser;
 
 import java.io.Reader;
 import java.util.Iterator;
@@ -31,4 +31,3 @@ public class OpenCSVBuilder<E> implements ICSVBuilder {
 		}		
 	}
 }
-*/

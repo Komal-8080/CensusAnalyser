@@ -1,4 +1,4 @@
-/*package censusanalyser;
+package censusanalyser;
 
 public class CSVBuilderException extends Exception {
 
@@ -17,4 +17,4 @@ public class CSVBuilderException extends Exception {
 		super(message, cause);
 		this.type = type;
 	}  
-}*/
+}
